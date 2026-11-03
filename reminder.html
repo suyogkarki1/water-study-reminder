@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reminder</title>
+  <style>
+    :root { --c1: #0b3d73; --c2: #1e88e5; --c3: #4fc3f7; --glow: 79, 195, 247; }
+    body.study  { --c1: #2a1052; --c2: #7b3fd1; --c3: #f4b8ff; --glow: 214, 150, 255; }
+    body.github { --c1: #05080d; --c2: #14532d; --c3: #4ade80; --glow: 74, 222, 128; }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #fff;
+      background: linear-gradient(135deg, var(--c1), var(--c2), var(--c1));
+      background-size: 300% 300%;
+      animation: drift 9s ease-in-out infinite;
+      display: grid; place-items: center;
+    }
+    @keyframes drift { 50% { background-position: 100% 100%; } }
+
+    canvas { position: fixed; inset: 0; pointer-events: none; }
+
+    .card {
+      position: relative; z-index: 1;
+      width: calc(100% - 36px); max-width: 340px;
+      padding: 26px 20px 20px;
+      text-align: center;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .22);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+      animation: popIn .7s cubic-bezier(.2, 1.6, .4, 1) both;
+    }
+    @keyframes popIn {
+      0%   { transform: translateY(40px) scale(.6) rotate(-6deg); opacity: 0; }
+      100% { transform: none; opacity: 1; }
+    }
+    .card.leave { animation: popOut .45s cubic-bezier(.6, -0.4, .7, .6) forwards; }
+    @keyframes popOut { to { transform: translateY(30px) scale(.5) rotate(4deg); opacity: 0; } }
+
+    /* icon with pulsing rings */
+    .badge { position: relative; width: 96px; height: 96px; margin: 0 auto 14px; }
+    .badge .ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 2px solid rgba(var(--glow), .8);
+      animation: ring 2.4s ease-out infinite;
+    }
+    .badge .ring:nth-child(2) { animation-delay: .8s; }
+    .badge .ring:nth-child(3) { animation-delay: 1.6s; }
+    @keyframes ring { from { transform: scale(.8); opacity: 1; } to { transform: scale(1.9); opacity: 0; } }
+    .badge .core {
+      position: absolute; inset: 0; border-radius: 50%;
+      display: grid; place-items: center; font-size: 48px;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.45), rgba(var(--glow), .35) 60%, rgba(0,0,0,.15));
+      box-shadow: 0 0 30px rgba(var(--glow), .7);
+      animation: wobble 2.2s ease-in-out infinite, entrance .9s cubic-bezier(.2, 1.8, .4, 1) both;
+    }
+    @keyframes entrance { from { transform: scale(0) rotate(-180deg); } to { transform: none; } }
+    @keyframes wobble {
+      0%, 100% { translate: 0 0; rotate: 0deg; }
+      25% { translate: 0 -6px; rotate: -8deg; }
+      75% { translate: 0 -3px; rotate: 8deg; }
+    }
+    body.github .core { animation: shake .25s linear infinite, entrance .9s cubic-bezier(.2, 1.8, .4, 1) both; }
+    @keyframes shake { 25% { translate: 1px -1px; } 75% { translate: -1px 1px; } }
+    .badge .core.launch { animation: launch .8s cubic-bezier(.5, 0, .9, .3) forwards !important; }
+    @keyframes launch { to { transform: translateY(-420px) scale(.6) rotate(-20deg); opacity: 0; } }
+
+    h1 { margin: 0; font-size: 22px; letter-spacing: .3px; text-shadow: 0 2px 12px rgba(var(--glow), .8); }
+    h1 span { display: inline-block; animation: letter .5s cubic-bezier(.2, 1.6, .4, 1) both; }
+    @keyframes letter { from { transform: translateY(16px) scale(.4); opacity: 0; } }
+    p.msg { margin: 8px 0 4px; opacity: 0; animation: fade .5s .7s forwards; }
+    .time { font-size: 12px; opacity: 0; animation: fade .5s .9s forwards; }
+    @keyframes fade { to { opacity: .85; } }
+
+    .actions { display: flex; gap: 10px; margin-top: 18px; opacity: 0; animation: fade .5s 1s forwards; }
+    button {
+      flex: 1; font: inherit; font-weight: 600; cursor: pointer;
+      padding: 11px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,.3);
+      color: #fff; background: rgba(255, 255, 255, .12);
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    button:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .2); }
+    button:active { transform: scale(.96); }
+    button.primary {
+      border: 0; color: var(--c1);
+      background: linear-gradient(135deg, #fff, var(--c3));
+      box-shadow: 0 6px 20px rgba(var(--glow), .55);
+      position: relative; overflow: hidden;
+    }
+    button.primary::after { /* shine sweep */
+      content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.8), transparent);
+      animation: shine 2.6s 1.4s ease-in-out infinite;
+    }
+    @keyframes shine { 60%, 100% { left: 130%; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fx"></canvas>
+  <div class="card" id="card">
+    <div class="badge">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="core" id="emoji"></div>
+    </div>
+    <h1 id="title"></h1>
+    <p class="msg" id="message"></p>
+    <div class="time" id="time"></div>
+    <div class="actions">
+      <button class="primary" id="done">Done ✓</button>
+      <button id="snooze">Snooze</button>
+    </div>
+  </div>
+  <script type="module" src="reminder.js"></script>
+</body>
+</html>

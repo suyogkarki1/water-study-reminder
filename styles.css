@@ -1,0 +1,57 @@
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #1b2430;
+  --muted: #5f6b7a;
+  --border: #dde3ea;
+  --accent: #2f7de1;
+  --accent-text: #ffffff;
+  --water: #2f7de1;
+  --study: #8a4fd8;
+  --github: #1f9d55;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14181f;
+    --card: #1d232c;
+    --text: #e7ecf2;
+    --muted: #9aa6b4;
+    --border: #2d3540;
+    --accent: #4f95ef;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button {
+  font: inherit;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+input[type="text"], input[type="time"], input[type="number"] {
+  font: inherit;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.muted { color: var(--muted); }
+.row { display: flex; align-items: center; gap: 8px; }
+.spread { justify-content: space-between; }

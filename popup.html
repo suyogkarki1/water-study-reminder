@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { width: 320px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    h1 { font-size: 16px; margin: 0; }
+    .item .emoji { font-size: 22px; width: 30px; text-align: center; }
+    .item .info { flex: 1; }
+    .item .name { font-weight: 600; }
+    .item small { display: block; }
+    .item button { padding: 4px 8px; font-size: 12px; }
+    .off { opacity: .5; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="row spread">
+    <h1>Reminders</h1>
+    <label class="row"><input type="checkbox" id="enabled"> On</label>
+  </div>
+  <div id="list"></div>
+  <div class="row spread">
+    <span class="muted" id="status"></span>
+    <a href="#" id="settings">Settings</a>
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
