@@ -73,9 +73,26 @@ async function fire(type, s) {
     message: r.message,
     priority: 2,
     requireInteraction: true,
+    silent: !!s.sound, // our duck quack replaces the Windows "ding"
     buttons: [{ title: 'Done ✓' }, { title: `Snooze ${s.snoozeMinutes} min` }]
   });
+  if (s.sound) playQuack();
   if (s.popupWindow) await openWindow(type);
+}
+
+// Play "quack quack" through a hidden offscreen page (service workers can't play audio).
+async function playQuack() {
+  try {
+    const exists = await chrome.offscreen.hasDocument?.();
+    if (!exists) {
+      await chrome.offscreen.createDocument({
+        url: 'offscreen.html',
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play the duck reminder sound'
+      });
+    }
+  } catch { /* document already exists */ }
+  chrome.runtime.sendMessage({ target: 'offscreen', action: 'quack' }).catch(() => {});
 }
 
 async function openWindow(type) {
@@ -137,6 +154,7 @@ chrome.notifications.onClicked.addListener((id) => {
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (msg?.target === 'offscreen') return false;
   (async () => {
     if (msg.action === 'done') await markDone(msg.type);
     else if (msg.action === 'snooze') await snooze(msg.type);

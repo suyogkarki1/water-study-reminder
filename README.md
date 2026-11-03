@@ -1,6 +1,10 @@
 # 💧📚🚀 Water, Study & GitHub Reminder
 
-A Chrome / Edge extension that pops up **animated reminders** to drink water, study, and push your code to GitHub, on a schedule you control.
+A Chrome / Edge extension that pops up **animated reminders** to drink water, study, and push your code to GitHub, on a schedule you control. And it says **"quack quack!"** 🦆
+
+<p align="center">
+  <img src="docs/screenshots/demo.gif" width="480" alt="Animated reminder popup demo: card pops in, then confetti when Done is clicked">
+</p>
 
 <p align="center">
   <img src="docs/screenshots/water.png" width="32%" alt="Drink water reminder">
@@ -15,7 +19,7 @@ A Chrome / Edge extension that pops up **animated reminders** to drink water, st
 - **Done ✓** sets off a confetti burst and the icon flies away. **Snooze** brings the reminder back later
 - **Daily counter**: glasses of water, study sessions and pushes done today
 - **Fully customizable**: any time range, any interval, your own titles and messages
-- Short chime sound (can be turned off)
+- 🦆 **Duck sound**: every reminder goes *"quack quack!"* and Done gives a happy little quack. The sound is generated in the browser (no audio files) and can be turned off in Settings
 
 ## Default schedule
 
@@ -127,6 +131,8 @@ manifest.json     Extension manifest (Manifest V3)
 background.js     Scheduler: checks every minute and opens reminders
 config.js         Default schedule + shared time helpers
 reminder.html/js  Animated pop-out reminder window
+sound.js          Synthesized duck "quack quack" sound
+offscreen.html/js Hidden page that plays the sound from the background
 popup.html/js     Toolbar popup (next reminders, today's counts)
 options.html/js   Settings page
 styles.css        Shared styles (light & dark mode)

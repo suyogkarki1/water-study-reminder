@@ -1,4 +1,5 @@
 import { EMOJI, getSettings, fmtTime, nowMinutes } from './config.js';
+import { playQuacks } from './sound.js';
 
 const type = new URLSearchParams(location.search).get('type') || 'water';
 const s = await getSettings();
@@ -119,7 +120,7 @@ $('done').onclick = async (e) => {
   const b = e.currentTarget.getBoundingClientRect();
   burst(b.left + b.width / 2, b.top);
   $('emoji').classList.add('launch');
-  if (s.sound) chime([784, 988, 1175, 1568]);
+  if (s.sound) playQuacks(1, { pitch: 1.35, dur: 0.18 }); // happy little quack
   await new Promise((res) => setTimeout(res, 1100));
   $('card').classList.add('leave');
   await new Promise((res) => setTimeout(res, 400));
@@ -134,23 +135,5 @@ $('snooze').onclick = async () => {
   window.close();
 };
 
-if (s.sound) chime([660, 880, 990]);
-
-function chime(notes) {
-  try {
-    const ac = new AudioContext();
-    notes.forEach((freq, i) => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      const t = ac.currentTime + i * 0.13;
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(t);
-      osc.stop(t + 0.5);
-    });
-  } catch { /* audio not available */ }
-}
+// The "quack quack" on open is played by the background worker, so it works
+// even when the popup window is disabled.
